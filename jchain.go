@@ -28,6 +28,14 @@ func getKind(val any) Kind {
 }
 
 func Parse(json string) *Value {
+	res, err := parseJSON(json, 1000)
+	if err != nil {
+		return &Value{Err: err}
+	}
+	return &Value{Kind: getKind(res), data: res}
+}
+
+func ParseUnlimited(json string) *Value {
 	res, err := parseJSON(json, 0)
 	if err != nil {
 		return &Value{Err: err}
@@ -447,7 +455,7 @@ func (v *Value) Rune() (rune, error) {
 	if len(res) == 0 {
 		return 0, fmt.Errorf("empty string")
 	}
-	if len(res) > 1 {
+	if utf8.RuneCountInString(res) > 1 {
 		return 0, fmt.Errorf("string length is greater than 1")
 	}
 	if !utf8.ValidString(res) {
