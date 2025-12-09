@@ -17,7 +17,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/mntwlds/json"
+	"github.com/mntwlds/jchain"
 )
 
 func main() {
