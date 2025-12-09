@@ -1,3 +1,3 @@
-module github.com/mntwlds/json
+module github.com/mntwlds/jchain
 
 go 1.18
