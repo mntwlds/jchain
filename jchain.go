@@ -14,7 +14,7 @@ func getKind(val any) Kind {
 		return Array
 	case string:
 		return String
-	case int, int64:
+	case int, int64, uint64:
 		return Int
 	case float64:
 		return Float
@@ -145,11 +145,17 @@ func (v *Value) Int64() (int64, error) {
 		return 0, fmt.Errorf("not int")
 	}
 
-	res, ok := v.data.(int64)
-	if !ok {
+	switch val := v.data.(type) {
+	case int64:
+		return val, nil
+	case uint64:
+		if val > math.MaxInt64 {
+			return 0, fmt.Errorf("out of range")
+		}
+		return int64(val), nil
+	default:
 		return 0, fmt.Errorf("invalid number")
 	}
-	return res, nil
 }
 
 func (v *Value) Int32() (int32, error) {
@@ -161,14 +167,20 @@ func (v *Value) Int32() (int32, error) {
 		return 0, fmt.Errorf("not int")
 	}
 
-	res, ok := v.data.(int64)
-	if !ok {
+	switch val := v.data.(type) {
+	case int64:
+		if val > math.MaxInt32 || val < math.MinInt32 {
+			return 0, fmt.Errorf("out of range")
+		}
+		return int32(val), nil
+	case uint64:
+		if val > math.MaxInt32 {
+			return 0, fmt.Errorf("out of range")
+		}
+		return int32(val), nil
+	default:
 		return 0, fmt.Errorf("not int")
 	}
-	if res > math.MaxInt32 || res < math.MinInt32 {
-		return 0, fmt.Errorf("out of range")
-	}
-	return int32(res), nil
 }
 
 func (v *Value) Int16() (int16, error) {
@@ -180,14 +192,20 @@ func (v *Value) Int16() (int16, error) {
 		return 0, fmt.Errorf("not int")
 	}
 
-	res, ok := v.data.(int64)
-	if !ok {
+	switch val := v.data.(type) {
+	case int64:
+		if val > math.MaxInt16 || val < math.MinInt16 {
+			return 0, fmt.Errorf("out of range")
+		}
+		return int16(val), nil
+	case uint64:
+		if val > math.MaxInt16 {
+			return 0, fmt.Errorf("out of range")
+		}
+		return int16(val), nil
+	default:
 		return 0, fmt.Errorf("not int")
 	}
-	if res > math.MaxInt16 || res < math.MinInt16 {
-		return 0, fmt.Errorf("out of range")
-	}
-	return int16(res), nil
 }
 
 func (v *Value) Int8() (int8, error) {
@@ -199,14 +217,20 @@ func (v *Value) Int8() (int8, error) {
 		return 0, fmt.Errorf("not int")
 	}
 
-	res, ok := v.data.(int64)
-	if !ok {
+	switch val := v.data.(type) {
+	case int64:
+		if val > math.MaxInt8 || val < math.MinInt8 {
+			return 0, fmt.Errorf("out of range")
+		}
+		return int8(val), nil
+	case uint64:
+		if val > math.MaxInt8 {
+			return 0, fmt.Errorf("out of range")
+		}
+		return int8(val), nil
+	default:
 		return 0, fmt.Errorf("not int")
 	}
-	if res > math.MaxInt8 || res < math.MinInt8 {
-		return 0, fmt.Errorf("out of range")
-	}
-	return int8(res), nil
 }
 
 func (v *Value) Int() (int, error) {
@@ -218,14 +242,20 @@ func (v *Value) Int() (int, error) {
 		return 0, fmt.Errorf("not int")
 	}
 
-	res, ok := v.data.(int64)
-	if !ok {
+	switch val := v.data.(type) {
+	case int64:
+		if val > math.MaxInt || val < math.MinInt {
+			return 0, fmt.Errorf("out of range")
+		}
+		return int(val), nil
+	case uint64:
+		if val > math.MaxInt {
+			return 0, fmt.Errorf("out of range")
+		}
+		return int(val), nil
+	default:
 		return 0, fmt.Errorf("not int")
 	}
-	if res > math.MaxInt || res < math.MinInt {
-		return 0, fmt.Errorf("out of range")
-	}
-	return int(res), nil
 }
 
 func (v *Value) Uint64() (uint64, error) {
@@ -237,14 +267,17 @@ func (v *Value) Uint64() (uint64, error) {
 		return 0, fmt.Errorf("not int")
 	}
 
-	res, ok := v.data.(int64)
-	if !ok {
+	switch val := v.data.(type) {
+	case int64:
+		if val < 0 {
+			return 0, fmt.Errorf("out of range")
+		}
+		return uint64(val), nil
+	case uint64:
+		return val, nil
+	default:
 		return 0, fmt.Errorf("not int")
 	}
-	if res < 0 {
-		return 0, fmt.Errorf("out of range")
-	}
-	return uint64(res), nil
 }
 
 func (v *Value) Uint32() (uint32, error) {
@@ -256,14 +289,20 @@ func (v *Value) Uint32() (uint32, error) {
 		return 0, fmt.Errorf("not int")
 	}
 
-	res, ok := v.data.(int64)
-	if !ok {
+	switch val := v.data.(type) {
+	case int64:
+		if val < 0 || val > math.MaxUint32 {
+			return 0, fmt.Errorf("out of range")
+		}
+		return uint32(val), nil
+	case uint64:
+		if val > math.MaxUint32 {
+			return 0, fmt.Errorf("out of range")
+		}
+		return uint32(val), nil
+	default:
 		return 0, fmt.Errorf("not int")
 	}
-	if res < 0 || res > math.MaxUint32 {
-		return 0, fmt.Errorf("out of range")
-	}
-	return uint32(res), nil
 }
 
 func (v *Value) Uint16() (uint16, error) {
@@ -275,14 +314,20 @@ func (v *Value) Uint16() (uint16, error) {
 		return 0, fmt.Errorf("not int")
 	}
 
-	res, ok := v.data.(int64)
-	if !ok {
+	switch val := v.data.(type) {
+	case int64:
+		if val < 0 || val > math.MaxUint16 {
+			return 0, fmt.Errorf("out of range")
+		}
+		return uint16(val), nil
+	case uint64:
+		if val > math.MaxUint16 {
+			return 0, fmt.Errorf("out of range")
+		}
+		return uint16(val), nil
+	default:
 		return 0, fmt.Errorf("not int")
 	}
-	if res < 0 || res > math.MaxUint16 {
-		return 0, fmt.Errorf("out of range")
-	}
-	return uint16(res), nil
 }
 
 func (v *Value) Uint8() (uint8, error) {
@@ -294,14 +339,20 @@ func (v *Value) Uint8() (uint8, error) {
 		return 0, fmt.Errorf("not int")
 	}
 
-	res, ok := v.data.(int64)
-	if !ok {
+	switch val := v.data.(type) {
+	case int64:
+		if val < 0 || val > math.MaxUint8 {
+			return 0, fmt.Errorf("out of range")
+		}
+		return uint8(val), nil
+	case uint64:
+		if val > math.MaxUint8 {
+			return 0, fmt.Errorf("out of range")
+		}
+		return uint8(val), nil
+	default:
 		return 0, fmt.Errorf("not int")
 	}
-	if res < 0 || res > math.MaxUint8 {
-		return 0, fmt.Errorf("out of range")
-	}
-	return uint8(res), nil
 }
 
 func (v *Value) Uint() (uint, error) {
@@ -313,14 +364,20 @@ func (v *Value) Uint() (uint, error) {
 		return 0, fmt.Errorf("not int")
 	}
 
-	res, ok := v.data.(int64)
-	if !ok {
+	switch val := v.data.(type) {
+	case int64:
+		if val < 0 || uint(val) > math.MaxUint {
+			return 0, fmt.Errorf("out of range")
+		}
+		return uint(val), nil
+	case uint64:
+		if val > math.MaxUint {
+			return 0, fmt.Errorf("out of range")
+		}
+		return uint(val), nil
+	default:
 		return 0, fmt.Errorf("not int")
 	}
-	if res < 0 || uint(res) > math.MaxUint {
-		return 0, fmt.Errorf("out of range")
-	}
-	return uint(res), nil
 }
 
 func (v *Value) Float64() (float64, error) {

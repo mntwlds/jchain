@@ -40,17 +40,18 @@ func TestLargeInteger(t *testing.T) {
 	}
 
 	val := parsed.Get("big")
-	if val.Kind != Float {
-		t.Fatalf("expected Float kind for large int, got %v", val.Kind)
+	if val.Kind != Int {
+		t.Fatalf("expected Int kind for large int, got %v", val.Kind)
 	}
 
-	fVal, err := val.Float64()
+	uVal, err := val.Uint64()
 	if err != nil {
 		t.Fatal(err)
 	}
-	// float64 might lose precision for very large ints, but here we just check it parsed
-	if fVal != 9223372036854775808.0 {
-		t.Logf("Parsed float value: %f", fVal)
+
+	expected := uint64(9223372036854775808)
+	if uVal != expected {
+		t.Errorf("Parsed uint64 value mismatch: got %d, expected %d", uVal, expected)
 	}
 }
 

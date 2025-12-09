@@ -131,6 +131,9 @@ func (p *parser) parseObject(i int) (map[string]any, int) {
 		for {
 			var key string
 			key, i = p.parseString(i)
+			if _, ok := jsonMap[key]; ok {
+				p.error(i, "Duplicate key "+key)
+			}
 			i = p.skipWhitespace(i)
 			if i >= p.len || p.input[i] != ':' {
 				p.error(i, "Invalid JSON")
@@ -162,7 +165,7 @@ func (p *parser) parseObject(i int) (map[string]any, int) {
 	return jsonMap, i
 }
 
-func (p *parser) parseArray(i int) (any, int) {
+func (p *parser) parseArray(i int) ([]any, int) {
 	if p.maxDepth > 0 && p.depth >= p.maxDepth {
 		p.error(i, "Maximum depth exceeded")
 	}
@@ -354,6 +357,14 @@ func (p *parser) parseNumber(i int) (any, int) {
 		number, err := strconv.ParseInt(temp, 10, 64)
 		if err != nil {
 			if numErr, ok := err.(*strconv.NumError); ok && numErr.Err == strconv.ErrRange {
+				// If out of range for int64, check if it fits in uint64 (only for positive numbers)
+				if temp[0] != '-' {
+					uNumber, uErr := strconv.ParseUint(temp, 10, 64)
+					if uErr == nil {
+						return uNumber, i
+					}
+				}
+
 				fNumber, fErr := strconv.ParseFloat(temp, 64)
 				if fErr != nil {
 					p.error(i, "Invalid number format")
