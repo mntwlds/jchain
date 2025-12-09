@@ -40,8 +40,8 @@ func TestLargeInteger(t *testing.T) {
 	}
 
 	val := parsed.Get("big")
-	if val.Kind != Int {
-		t.Fatalf("expected Int kind for large int, got %v", val.Kind)
+	if val.kind != Int {
+		t.Fatalf("expected Int kind for large int, got %v", val.kind)
 	}
 
 	uVal, err := val.Uint64()

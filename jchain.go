@@ -30,25 +30,25 @@ func getKind(val any) Kind {
 func Parse(json string) *Value {
 	res, err := parseJSON(json, 1000)
 	if err != nil {
-		return &Value{Err: err}
+		return &Value{err: err}
 	}
-	return &Value{Kind: getKind(res), data: res}
+	return &Value{kind: getKind(res), data: res}
 }
 
 func ParseUnlimited(json string) *Value {
 	res, err := parseJSON(json, 0)
 	if err != nil {
-		return &Value{Err: err}
+		return &Value{err: err}
 	}
-	return &Value{Kind: getKind(res), data: res}
+	return &Value{kind: getKind(res), data: res}
 }
 
 func ParseWithLimit(json string, maxDepth int) *Value {
 	res, err := parseJSON(json, maxDepth)
 	if err != nil {
-		return &Value{Err: err}
+		return &Value{err: err}
 	}
-	return &Value{Kind: getKind(res), data: res}
+	return &Value{kind: getKind(res), data: res}
 }
 
 type Kind int
@@ -65,63 +65,63 @@ const (
 )
 
 type Value struct {
-	Kind Kind
+	kind Kind
 	data any
-	Err  error
+	err  error
 }
 
 func (v *Value) Index(i int) *Value {
-	if v.Err != nil {
-		return &Value{Err: v.Err}
+	if v.err != nil {
+		return &Value{err: v.err}
 	}
 
-	if v.Kind != Array {
-		return &Value{Err: fmt.Errorf("not array")}
+	if v.kind != Array {
+		return &Value{err: fmt.Errorf("not array")}
 	}
 
 	arrSlice, ok := v.data.([]any)
 	if ok {
 		if i < 0 || i >= len(arrSlice) {
-			return &Value{Err: fmt.Errorf("index out of range")}
+			return &Value{err: fmt.Errorf("index out of range")}
 		}
 		val := arrSlice[i]
-		return &Value{Kind: getKind(val), data: val}
+		return &Value{kind: getKind(val), data: val}
 	} else {
-		return &Value{Err: fmt.Errorf("invalid array structure")}
+		return &Value{err: fmt.Errorf("invalid array structure")}
 	}
 }
 
 func (v *Value) Slice(start int, end int) *Value {
-	if v.Err != nil {
-		return &Value{Err: v.Err}
+	if v.err != nil {
+		return &Value{err: v.err}
 	}
 
-	if v.Kind != Array {
-		return &Value{Err: fmt.Errorf("not array")}
+	if v.kind != Array {
+		return &Value{err: fmt.Errorf("not array")}
 	}
 
 	arr, ok := v.data.([]any)
 	if ok {
 		if start >= len(arr) || end > len(arr) {
-			return &Value{Err: fmt.Errorf("slice index out of range")}
+			return &Value{err: fmt.Errorf("slice index out of range")}
 		} else if start > end {
-			return &Value{Err: fmt.Errorf("invalid index")}
+			return &Value{err: fmt.Errorf("invalid index")}
 		}
 
 		slice := arr[start:end]
-		return &Value{Kind: Array, data: slice}
+		return &Value{kind: Array, data: slice}
 	} else {
-		return &Value{Err: fmt.Errorf("invalid array structure")}
+		return &Value{err: fmt.Errorf("invalid array structure")}
 	}
 }
 
 func (v *Value) Get(key string) *Value {
-	if v.Err != nil {
-		return &Value{Err: v.Err}
+	if v.err != nil {
+		return &Value{err: v.err}
 	}
 
-	if v.Kind != Object {
-		return &Value{Err: fmt.Errorf("not object")}
+	if v.kind != Object {
+		return &Value{err: fmt.Errorf("not object")}
 	}
 
 	obj, ok := v.data.(map[string]any)
@@ -135,21 +135,21 @@ func (v *Value) Get(key string) *Value {
 		}
 		if hasKey {
 			val := obj[key]
-			return &Value{Kind: getKind(val), data: val}
+			return &Value{kind: getKind(val), data: val}
 		} else {
-			return &Value{Err: fmt.Errorf("object doesnt have that key")}
+			return &Value{err: fmt.Errorf("object doesnt have that key")}
 		}
 	} else {
-		return &Value{Err: fmt.Errorf("invalid map structure")}
+		return &Value{err: fmt.Errorf("invalid map structure")}
 	}
 }
 
 func (v *Value) Int64() (int64, error) {
-	if v.Err != nil {
-		return 0, v.Err
+	if v.err != nil {
+		return 0, v.err
 	}
 
-	if v.Kind != Int {
+	if v.kind != Int {
 		return 0, fmt.Errorf("not int")
 	}
 
@@ -167,11 +167,11 @@ func (v *Value) Int64() (int64, error) {
 }
 
 func (v *Value) Int32() (int32, error) {
-	if v.Err != nil {
-		return 0, v.Err
+	if v.err != nil {
+		return 0, v.err
 	}
 
-	if v.Kind != Int {
+	if v.kind != Int {
 		return 0, fmt.Errorf("not int")
 	}
 
@@ -192,11 +192,11 @@ func (v *Value) Int32() (int32, error) {
 }
 
 func (v *Value) Int16() (int16, error) {
-	if v.Err != nil {
-		return 0, v.Err
+	if v.err != nil {
+		return 0, v.err
 	}
 
-	if v.Kind != Int {
+	if v.kind != Int {
 		return 0, fmt.Errorf("not int")
 	}
 
@@ -217,11 +217,11 @@ func (v *Value) Int16() (int16, error) {
 }
 
 func (v *Value) Int8() (int8, error) {
-	if v.Err != nil {
-		return 0, v.Err
+	if v.err != nil {
+		return 0, v.err
 	}
 
-	if v.Kind != Int {
+	if v.kind != Int {
 		return 0, fmt.Errorf("not int")
 	}
 
@@ -242,11 +242,11 @@ func (v *Value) Int8() (int8, error) {
 }
 
 func (v *Value) Int() (int, error) {
-	if v.Err != nil {
-		return 0, v.Err
+	if v.err != nil {
+		return 0, v.err
 	}
 
-	if v.Kind != Int {
+	if v.kind != Int {
 		return 0, fmt.Errorf("not int")
 	}
 
@@ -267,11 +267,11 @@ func (v *Value) Int() (int, error) {
 }
 
 func (v *Value) Uint64() (uint64, error) {
-	if v.Err != nil {
-		return 0, v.Err
+	if v.err != nil {
+		return 0, v.err
 	}
 
-	if v.Kind != Int {
+	if v.kind != Int {
 		return 0, fmt.Errorf("not int")
 	}
 
@@ -289,11 +289,11 @@ func (v *Value) Uint64() (uint64, error) {
 }
 
 func (v *Value) Uint32() (uint32, error) {
-	if v.Err != nil {
-		return 0, v.Err
+	if v.err != nil {
+		return 0, v.err
 	}
 
-	if v.Kind != Int {
+	if v.kind != Int {
 		return 0, fmt.Errorf("not int")
 	}
 
@@ -314,11 +314,11 @@ func (v *Value) Uint32() (uint32, error) {
 }
 
 func (v *Value) Uint16() (uint16, error) {
-	if v.Err != nil {
-		return 0, v.Err
+	if v.err != nil {
+		return 0, v.err
 	}
 
-	if v.Kind != Int {
+	if v.kind != Int {
 		return 0, fmt.Errorf("not int")
 	}
 
@@ -339,11 +339,11 @@ func (v *Value) Uint16() (uint16, error) {
 }
 
 func (v *Value) Uint8() (uint8, error) {
-	if v.Err != nil {
-		return 0, v.Err
+	if v.err != nil {
+		return 0, v.err
 	}
 
-	if v.Kind != Int {
+	if v.kind != Int {
 		return 0, fmt.Errorf("not int")
 	}
 
@@ -364,11 +364,11 @@ func (v *Value) Uint8() (uint8, error) {
 }
 
 func (v *Value) Uint() (uint, error) {
-	if v.Err != nil {
-		return 0, v.Err
+	if v.err != nil {
+		return 0, v.err
 	}
 
-	if v.Kind != Int {
+	if v.kind != Int {
 		return 0, fmt.Errorf("not int")
 	}
 
@@ -389,11 +389,11 @@ func (v *Value) Uint() (uint, error) {
 }
 
 func (v *Value) Float64() (float64, error) {
-	if v.Err != nil {
-		return 0, v.Err
+	if v.err != nil {
+		return 0, v.err
 	}
 
-	if v.Kind != Float {
+	if v.kind != Float {
 		return 0, fmt.Errorf("not float")
 	}
 
@@ -405,11 +405,11 @@ func (v *Value) Float64() (float64, error) {
 }
 
 func (v *Value) Float32() (float32, error) {
-	if v.Err != nil {
-		return 0, v.Err
+	if v.err != nil {
+		return 0, v.err
 	}
 
-	if v.Kind != Float {
+	if v.kind != Float {
 		return 0, fmt.Errorf("not float")
 	}
 
@@ -424,11 +424,11 @@ func (v *Value) Float32() (float32, error) {
 }
 
 func (v *Value) String() (string, error) {
-	if v.Err != nil {
-		return "", v.Err
+	if v.err != nil {
+		return "", v.err
 	}
 
-	if v.Kind != String {
+	if v.kind != String {
 		return "", fmt.Errorf("not string")
 	}
 
@@ -440,11 +440,11 @@ func (v *Value) String() (string, error) {
 }
 
 func (v *Value) Rune() (rune, error) {
-	if v.Err != nil {
-		return 0, v.Err
+	if v.err != nil {
+		return 0, v.err
 	}
 
-	if v.Kind != String {
+	if v.kind != String {
 		return 0, fmt.Errorf("not string")
 	}
 
@@ -466,11 +466,11 @@ func (v *Value) Rune() (rune, error) {
 }
 
 func (v *Value) Bool() (bool, error) {
-	if v.Err != nil {
-		return false, v.Err
+	if v.err != nil {
+		return false, v.err
 	}
 
-	if v.Kind != Bool {
+	if v.kind != Bool {
 		return false, fmt.Errorf("not boolean")
 	}
 
@@ -482,11 +482,11 @@ func (v *Value) Bool() (bool, error) {
 }
 
 func (v *Value) Array() ([]any, error) {
-	if v.Err != nil {
-		return nil, v.Err
+	if v.err != nil {
+		return nil, v.err
 	}
 
-	if v.Kind != Array {
+	if v.kind != Array {
 		return nil, fmt.Errorf("not array")
 	}
 	arr, ok := v.data.([]any)
@@ -496,39 +496,49 @@ func (v *Value) Array() ([]any, error) {
 	return arr, nil
 }
 
-func (v *Value) Object() (map[string]any, error) {
-	if v.Err != nil {
-		return nil, v.Err
+func (v *Value) Map() (map[string]any, error) {
+	if v.err != nil {
+		return nil, v.err
 	}
 
-	if v.Kind != Object {
+	if v.kind != Object {
 		return nil, fmt.Errorf("not object")
 	}
 	obj, ok := v.data.(map[string]any)
 	if !ok {
-		return nil, fmt.Errorf("not object")
+		return nil, fmt.Errorf("not map")
 	}
 	return obj, nil
 }
 
-func (v *Value) Null() (any, error) {
-	if v.Err != nil {
-		return nil, v.Err
+func (v *Value) Nil() (any, error) {
+	if v.err != nil {
+		return nil, v.err
 	}
 
-	if v.Kind != Null {
+	if v.kind != Null {
 		return nil, fmt.Errorf("not null")
 	}
 	return nil, nil
 }
 
 func (v *Value) Any() (any, error) {
-	if v.Err != nil {
-		return nil, v.Err
+	if v.err != nil {
+		return nil, v.err
 	}
 	return v.data, nil
 }
 
 func (v *Value) Error() error {
-	return v.Err
+	if v.err != nil {
+		return v.err
+	}
+	return nil
+}
+
+func (v *Value) Kind() Kind {
+	if v.err != nil {
+		return Invalid
+	}
+	return v.kind
 }
