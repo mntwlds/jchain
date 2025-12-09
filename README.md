@@ -5,7 +5,7 @@
 ## Installation
 
 ```bash
-go get github.com/mntwlds/json
+go get github.com/mntwlds/jchain
 ```
 
 ## Usage
